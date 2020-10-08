@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use App\Chocolate;
+use App\Mail\UserAction;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class LoggedController extends Controller
 {
@@ -31,6 +36,11 @@ class LoggedController extends Controller
 
       $chocolate = Chocolate::findOrFail($id);
       $chocolate -> delete();
+
+      $user = Auth::user();
+      $action = "DELETE";
+
+       Mail::to('admin@chocolate.it')->send(new UserAction($user, $chocolate, $action));
 
       return redirect() -> route('chocolate-index');
     }
